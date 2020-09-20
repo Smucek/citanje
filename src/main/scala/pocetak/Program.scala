@@ -1,16 +1,11 @@
 package pocetak
 
-import scala.io.Source
-
-object Program {
+object Program extends SekvencijalnoCitanje {
 
   def main(args: Array[String]) = {
 
-    //      val start = System.currentTimeMillis()
-    for (i <- 1 until 11) {
-      Source.fromFile(("Zadaca2File" + i.toString + ".txt"))
-      println("Broj procitanih fajlova je " + i)
-    }
-
+    val start = System.currentTimeMillis()
+    sekvencijalnoCitanje()
+    println(s"Sekvencijalno citanje 10 txt fajlova ocitano u ${System.currentTimeMillis() - start} ms")
   }
 }
