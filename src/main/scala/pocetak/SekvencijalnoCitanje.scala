@@ -9,12 +9,13 @@ trait SekvencijalnoCitanje {
       val izvorniFajlovi = Source.fromFile("Zadaca2File" + i.toString + ".txt")
       val linijeFajla: Seq[String] = izvorniFajlovi.getLines().toSeq
 
-      linijeFajla.foreach { linija =>
-        println(linija)
-      }
+      val vijesti: Seq[News] = linijeFajla.map { komanda =>
+        val dijelovi: Seq[String] = komanda.split("\\|")
 
-//      for (linija <- linijeFajla) println(linija.trim)
-//      println("Broj procitanih fajlova je " + i)
+        new News(id = dijelovi(0), simbol = dijelovi(1), naslov = dijelovi(2),
+          datum = dijelovi(3), stranica = dijelovi(4))
+
+        }
+      }
     }
-  }
 }

@@ -8,14 +8,7 @@ import scala.util.{Failure, Success}
 object Program extends SekvencijalnoCitanje {
 
   def futureCitanje(): Future[Unit] = Future {
-    for (i <- 1 until 11) {
-      val izvorniFajlovi = Source.fromFile("Zadaca2File" + i.toString + ".txt")
-      val linijeFajla: Seq[String] = izvorniFajlovi.getLines().toSeq
-
-      linijeFajla.foreach { linija =>
-        println(linija)
-    }
-  }
+    sekvencijalnoCitanje()
 }
 
   def main(args: Array[String]) = {
@@ -33,6 +26,5 @@ object Program extends SekvencijalnoCitanje {
     sekvencijalnoCitanje()
     println(s"Sekvencijalno citanje 10 txt fajlova ocitano u ${System.currentTimeMillis() - start} ms")
     println(a)
-
   }
 }
