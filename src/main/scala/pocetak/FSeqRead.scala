@@ -7,7 +7,7 @@ import scala.util.{Failure, Success}
 
 object FSeqRead {
 
-  def readFromFile(fileNumber: Int) {
+  def readFromFile(fileNumber: Int): Seq[Seq[String]] = {
     val sourceFile = Source.fromFile("Zadaca2File" + fileNumber.toString + ".txt")
     val fileLines: Seq[String] = sourceFile.getLines().toSeq
 
@@ -17,7 +17,8 @@ object FSeqRead {
     fileLinesSplit.foreach { komanda =>
       new News(komanda(0), komanda(1), komanda(2), komanda(3), komanda(4))
     }
-//println(fileLinesSplit)
+    fileLinesSplit
+    //println(fileLinesSplit)
   }
 
     def main(args: Array[String]): Unit = {
@@ -29,15 +30,15 @@ object FSeqRead {
       println(a)
 
       val seq: Seq[Int] = 1 to 10
-      val futurei: Seq[Future[Unit]] = seq.map { broj =>
+      val futurei: Seq[Future[Seq[Seq[String]]]] = seq.map { broj =>
         Future {
           readFromFile(broj)
         }
       }
-      val rezultat: Future[Seq[Unit]] = Future.sequence(futurei)
+      val rezultat: Future[Seq[Seq[Seq[String]]]] = Future.sequence(futurei)
 
       rezultat.onComplete {
-        case Success(r) => r
+        case Success(r) => println(r)
         case Failure(ex) => println(s"greska: ${ex.getMessage}")
       }
       val startF = System.currentTimeMillis()
