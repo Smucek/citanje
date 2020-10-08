@@ -7,43 +7,40 @@ import scala.util.{Failure, Success}
 
 object FSeqRead {
 
-  def readFromFile(fileNumber: Int): Seq[Seq[String]] = {
+  def readFromFile(fileNumber: Int): Seq[News] = {
     val sourceFile = Source.fromFile("Zadaca2File" + fileNumber.toString + ".txt")
     val fileLines: Seq[String] = sourceFile.getLines().toSeq
 
-    val fileLinesSplit: Seq[Seq[String]] = fileLines.map { komanda =>
-      komanda.split("\\|").map(znak => znak.trim)
+    val fileLinesSplit: Seq[Seq[String]] = fileLines.map { com =>
+      com.split("\\|").map(znak => znak.trim)
     }
-    fileLinesSplit.foreach { komanda =>
-      new News(komanda(0), komanda(1), komanda(2), komanda(3), komanda(4))
+    val news: Seq[News] = fileLinesSplit.map { com =>
+      new News(com(0), com(1), com(2), com(3), com(4))
     }
-    fileLinesSplit
-    //println(fileLinesSplit)
+    news
   }
 
     def main(args: Array[String]): Unit = {
-      val startP = System.currentTimeMillis()
+      val startSeqRead = System.currentTimeMillis()
       for (i <- 1 to 10) {
         readFromFile(i)
       }
-      val a = (s"Paralelno citanje 10 txt fajlova ocitano u ${System.currentTimeMillis() - startP} ms")
-      println(a)
+      val timeSeq = (s"Sequentional read of 10 txt files read in ${System.currentTimeMillis() - startSeqRead} ms")
+      println(timeSeq)
 
+      val startF = System.currentTimeMillis()
       val seq: Seq[Int] = 1 to 10
-      val futurei: Seq[Future[Seq[Seq[String]]]] = seq.map { broj =>
+      val futures: Seq[Future[Seq[News]]] = seq.map { broj =>
         Future {
           readFromFile(broj)
         }
       }
-      val rezultat: Future[Seq[Seq[Seq[String]]]] = Future.sequence(futurei)
+      val res: Future[Seq[Seq[News]]] = Future.sequence(futures)
 
-      rezultat.onComplete {
-        case Success(r) => println(r)
-        case Failure(ex) => println(s"greska: ${ex.getMessage}")
+      res.onComplete {
+        case Success(r) => println(s"Future read of ${r.size} txt files read in ${System.currentTimeMillis() - startF} ms")
+        case Failure(ex) => println(s"ex: ${ex.getMessage}")
       }
-      val startF = System.currentTimeMillis()
       Thread.sleep(3000)
-      val b = (s"Future citanje 10 txt fajlova ocitano u ${System.currentTimeMillis() - startF-3000} ms")
-      println(b)
     }
   }
