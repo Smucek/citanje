@@ -1,9 +1,12 @@
 package pocetak
 
+import akka.actor.Status.{Failure, Success}
 import akka.actor.{ActorSystem, Props}
 import akka.util.Timeout
 import pocetak.FileReader.ReadFromFile
-
+import akka.pattern.ask
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.duration._
 
 object FileReaderActor {
@@ -15,29 +18,25 @@ object FileReaderActor {
 
     val reader = as.actorOf(Props(new FileReader))
 
-//    val fN: Seq[Int] = 1 to 10
 
     val startActorRead = System.currentTimeMillis()
 
-    reader ! ReadFromFile(1)
-    reader ! ReadFromFile(2)
-    reader ! ReadFromFile(3)
-    reader ! ReadFromFile(4)
-    reader ! ReadFromFile(5)
-    reader ! ReadFromFile(6)
-    reader ! ReadFromFile(7)
-    reader ! ReadFromFile(8)
-    reader ! ReadFromFile(9)
-    reader ! ReadFromFile(10)
-
-    val timeActor = (s"Actor read of 10 txt files read in ${System.currentTimeMillis() - startActorRead} ms")
-    println(timeActor)
+    val fN: Seq[Int] = 1 to 10
 
 
-    //    result.onComplete {
-//          case Success(r) => println("Read success")
-//          case Failure(exception) => println(s"Can not read file ${exception.getMessage}")
-//
-//        }
+    //    reader ? ReadFromFile(1)
+
+    val futures: Seq[Future[Any]] = fN.map { number => {
+
+        reader ? ReadFromFile(number)
+      }
+    }
+    val res = Future.sequence(futures)
+
+        res.onComplete {
+          case Success(r) => println(s"Future read of ${r} txt files read in ${System.currentTimeMillis() - startActorRead} ms")
+          case Failure(exception) => println(s"Can not read file ${exception.getMessage}")
+
+        }
       }
 }
