@@ -1,25 +1,21 @@
 package pocetak
 
+import akka.pattern.ask
 import akka.actor.Actor
+import akka.util.Timeout
 import pocetak.FileReader.ReadFromFile
-
+import scala.concurrent.duration._
 import scala.io.Source
 
 object FileReader {
 
-  case class ReadFromFile(numberFile: Int) {
-
-  }
+  case class ReadFromFile(numberFile: Int)
 }
 
 class FileReader extends Actor {
-//  val fileRange: Seq[Int] = 1 to 10
-
-
-
-
   override def receive: Receive = {
     case ReadFromFile(numberFile) => {
+      implicit val timeout = new Timeout(2.seconds)
       def readFromFile: Seq[News] = {
         val sourceFile = Source.fromFile("Zadaca2File" + numberFile.toString + ".txt")
         val fileLines: Seq[String] = sourceFile.getLines().toSeq
@@ -32,7 +28,7 @@ class FileReader extends Actor {
         }
         news
       }
-      sender ! readFromFile
+      sender ? readFromFile
     }
     }
 }
