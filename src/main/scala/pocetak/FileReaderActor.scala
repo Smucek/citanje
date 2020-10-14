@@ -20,13 +20,14 @@ object FileReaderActor {
     val reader = as.actorOf(Props(new FileReader))
 
     val startActorRead = System.currentTimeMillis()
-    val fileNumbers: Seq[Int] = 0 to 10
+    val fileNumbers: Seq[Int] = 0 to 22
     val futures = fileNumbers.map { number => {
-      (reader ? ReadFromFile(number)).asInstanceOf[Future[Seq[News]]]
+      (reader ? ReadFromFile(number)).recover{case ex: Throwable => println(s"File does not exists ${ex.getMessage}")
+      }.asInstanceOf[Future[Seq[News]]]
       }
     }
 
-    val result = Future.sequence(futures).recover { case ex: Exception => "Cant read files"}
+    val result = Future.sequence(futures)
 //    Await.result(result,1.seconds)
 
 
@@ -35,4 +36,6 @@ object FileReaderActor {
           case Failure(exception) => println(s"File does not exists ${exception.getMessage}")
         }
       }
+
+
 }

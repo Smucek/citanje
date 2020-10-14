@@ -1,9 +1,10 @@
 package pocetak
 
-import akka.pattern.ask
 import akka.actor.Actor
+import akka.pattern.ask
 import akka.util.Timeout
 import pocetak.FileReader.ReadFromFile
+
 import scala.concurrent.duration._
 import scala.io.Source
 
